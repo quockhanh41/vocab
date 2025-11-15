@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Flashcard - IELTS Vocabulary</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎴 Flashcard Learning</h1>
+            <p class="subtitle">Học từ vựng IELTS với thẻ ghi nhớ</p>
+            <nav class="nav-links">
+                <a href="/">Trích xuất</a>
+                <a href="/hoc-flashcard" class="active">Học Flashcard</a>
+                <a href="/hoc-theo-lich">Học theo lịch</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content flashcard-main">
+            
+            <!-- File Import Section -->
+            <section id="importSection" class="import-section">
+                
+                <!-- Server Files -->
+                <div class="import-card">
+                    <div class="import-icon">☁️</div>
+                    <h2>File từ vựng đã lưu</h2>
+                    <p>Chọn từ danh sách file đã lưu trên server</p>
+                    
+                    <div id="serverFilesList" class="server-files-list">
+                        <div class="loading-files">Đang tải danh sách...</div>
+                    </div>
+                    
+                    <button id="refreshFilesBtn" class="btn btn-outline" style="margin-top: 15px;">
+                        🔄 Làm mới danh sách
+                    </button>
+                </div>
+
+                <!-- Or Upload Local File -->
+                <div class="divider">
+                    <span>HOẶC</span>
+                </div>
+
+                <div class="import-card">
+                    <div class="import-icon">📂</div>
+                    <h2>Tải file từ máy</h2>
+                    <p>Chọn file JSON từ máy tính của bạn</p>
+                    <input 
+                        type="file" 
+                        id="fileInput" 
+                        accept=".json"
+                        style="display: none;"
+                    >
+                    <button id="selectFileBtn" class="btn btn-secondary btn-large">
+                        📁 Chọn file từ máy
+                    </button>
+                </div>
+            </section>
+
+            <!-- Vocabulary Preview Section -->
+            <section id="previewSection" class="preview-section" style="display: none;">
+                <div class="preview-header">
+                    <h2>📋 Xem trước danh sách từ</h2>
+                    <div class="preview-info">
+                        <span id="previewFileName"></span>
+                        <span id="previewWordCount"></span>
+                    </div>
+                </div>
+
+                <!-- Part of Speech Legend -->
+                <div class="pos-legend">
+                    <span class="legend-title">Loại từ:</span>
+                    <span class="legend-item"><span class="vocab-pos pos-noun">Noun</span></span>
+                    <span class="legend-item"><span class="vocab-pos pos-verb">Verb</span></span>
+                    <span class="legend-item"><span class="vocab-pos pos-adj">Adjective</span></span>
+                    <span class="legend-item"><span class="vocab-pos pos-adv">Adverb</span></span>
+                </div>
+                
+                <div id="previewList" class="preview-list">
+                    <!-- Vocabulary preview will be inserted here -->
+                </div>
+
+                <div class="preview-actions">
+                    <button id="startLearningBtn" class="btn btn-primary btn-large">
+                        🎴 Bắt đầu học
+                    </button>
+                    <button id="backToSelectBtn" class="btn btn-outline">
+                        ← Chọn file khác
+                    </button>
+                </div>
+            </section>
+
+            <!-- Flashcard Section -->
+            <section id="flashcardSection" class="flashcard-section" style="display: none;">
+                
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span id="progressText">Thẻ 1 / 10</span>
+                        <span id="fileNameDisplay" class="file-name"></span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <div class="mode-toggle">
+                        <button id="toggleModeBtn" class="btn btn-outline">
+                            📝 Chuyển sang chế độ Test
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Flashcard -->
+                <div class="flashcard-container">
+                    <div id="flashcard" class="flashcard">
+                        <div class="flashcard-inner">
+                            <!-- Front -->
+                            <div class="flashcard-front">
+                                <div class="card-badge" id="frontBadge">Front</div>
+                                <h2 id="cardWord" class="card-word">substantial</h2>
+                                <p id="cardPhonetic" class="card-phonetic">/səbˈstænʃəl/</p>
+                                
+                                <!-- Test Mode Input (hidden by default) -->
+                                <div id="testInput" class="test-input-container" style="display: none;">
+                                    <p class="test-prompt">📝 Nhập từ tiếng Anh:</p>
+                                    <input 
+                                        type="text" 
+                                        id="userInput" 
+                                        class="test-input" 
+                                        placeholder="Type the word here..."
+                                        autocomplete="off"
+                                    />
+                                    <button id="checkAnswerBtn" class="btn btn-primary">
+                                        ✔️ Kiểm tra
+                                    </button>
+                                    <div id="testResult" class="test-result"></div>
+                                </div>
+                            </div>
+                            <!-- Back -->
+                            <div class="flashcard-back">
+                                <div class="card-badge">Back</div>
+                                <div class="card-content">
+                                    <p class="card-pos" id="cardPos">adjective</p>
+                                    <div class="card-meaning">
+                                        <p><strong>English:</strong> <span id="cardMeaningEn">of considerable importance</span></p>
+                                        <p><strong>Tiếng Việt:</strong> <span id="cardMeaningVi">đáng kể</span></p>
+                                    </div>
+                                    <div class="card-example">
+                                        <p><strong>Context:</strong></p>
+                                        <p id="cardContext" class="example-text">There has been substantial progress...</p>
+                                    </div>
+                                    <div class="card-example">
+                                        <p><strong>Example:</strong></p>
+                                        <p id="cardExample" class="example-text">The company made substantial profits.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flashcard-controls">
+                    <button id="prevBtn" class="btn btn-secondary">
+                        ◀ Trước đó
+                    </button>
+                    <button id="flipBtn" class="btn btn-primary">
+                        🔄 Lật thẻ
+                    </button>
+                    <button id="nextBtn" class="btn btn-secondary">
+                        Tiếp theo ▶
+                    </button>
+                </div>
+
+                <!-- Additional Controls -->
+                <div class="additional-controls">
+                    <button id="shuffleBtn" class="btn btn-outline">
+                        🔀 Xáo trộn
+                    </button>
+                    <button id="resetBtn" class="btn btn-outline">
+                        🔄 Bắt đầu lại
+                    </button>
+                    <button id="changeFileBtn" class="btn btn-outline">
+                        📁 Đổi file khác
+                    </button>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with ❤️ for IELTS learners</p>
+        </footer>
+    </div>
+
+    <script src="script_flashcard.js"></script>
+</body>
+</html>

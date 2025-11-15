@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Vocabulary Extractor</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📚 IELTS Vocabulary Extractor</h1>
+            <p class="subtitle">Trích xuất từ vựng từ đoạn văn IELTS Reading</p>
+            <nav class="nav-links">
+                <a href="/" class="active">Trích xuất</a>
+                <a href="/hoc-flashcard">Học Flashcard</a>
+                <a href="/hoc-theo-lich">Học theo lịch</a>
+            </nav>
+        </header>
+
+        <!-- Main Content - Two Column Layout -->
+        <main class="main-content two-column-layout">
+            <!-- Left Column: Input & Search -->
+            <div class="left-column">
+                <section class="input-section">
+                <h2>Nhập đoạn văn IELTS Reading</h2>
+                <textarea 
+                    id="passageInput" 
+                    placeholder="Dán đoạn văn IELTS Reading vào đây..."
+                    rows="10"
+                ></textarea>
+                
+                <div class="input-controls">
+                    <div class="word-count-control">
+                        <label for="wordCountInput">Số lượng từ:</label>
+                        <input 
+                            type="number" 
+                            id="wordCountInput" 
+                            min="5" 
+                            max="30" 
+                            value="15" 
+                            placeholder="10-15"
+                        >
+                        <span class="help-text">(5-30 từ, mặc định: 15)</span>
+                    </div>
+                    <button id="extractBtn" class="btn btn-primary">
+                        🔍 Trích xuất từ vựng
+                    </button>
+                </div>
+                
+                <div class="search-section">
+                    <h3>🔍 Tìm kiếm từ vựng</h3>
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Nhập từ cần tìm (VD: substantial, curiosity...)" 
+                        />
+                        <button id="searchBtn" class="btn btn-primary">
+                            🔍 Tìm kiếm
+                        </button>
+                    </div>
+                    <div id="searchResults" class="search-results" style="display: none;"></div>
+                </div>
+
+                <div class="manual-lookup-section">
+                    <p class="help-text">
+                        💡 <strong>Mẹo:</strong> Bôi đen từ/cụm từ trong đoạn văn, sau đó nhấn nút bên dưới để tra cứu và thêm vào danh sách
+                    </p>
+                    <button id="lookupBtn" class="btn btn-outline" disabled>
+                        📖 Tra cứu từ đã chọn
+                    </button>
+                </div>
+                
+                <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Đang trích xuất từ vựng...</p>
+                </div>
+            </section>
+            </div>
+            <!-- End Left Column -->
+
+            <!-- Right Column: Vocabulary Results -->
+            <div class="right-column">
+                <section id="resultsSection" class="results-section" style="display: none;">
+                <div class="results-header">
+                    <h2>Danh sách từ vựng</h2>
+                    <button id="downloadBtn" class="btn btn-success">
+                        💾 Lưu vào server
+                    </button>
+                </div>
+                
+                <div id="mockDataWarning" class="warning-banner" style="display: none;">
+                    ⚠️ Đang sử dụng dữ liệu mẫu. Thiết lập GEMINI_API_KEY để sử dụng AI thực.
+                </div>
+
+                <!-- Part of Speech Legend -->
+                <div class="pos-legend">
+                    <span class="legend-title">Loại từ:</span>
+                    <span class="legend-item"><span class="vocab-pos pos-noun">Noun</span></span>
+                    <span class="legend-item"><span class="vocab-pos pos-verb">Verb</span></span>
+                    <span class="legend-item"><span class="vocab-pos pos-adj">Adjective</span></span>
+                    <span class="legend-item"><span class="vocab-pos pos-adv">Adverb</span></span>
+                </div>
+
+                <div id="vocabularyList" class="vocabulary-list">
+                    <!-- Vocabulary cards will be inserted here -->
+                </div>
+            </section>
+            </div>
+            <!-- End Right Column -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with ❤️ for IELTS learners</p>
+        </footer>
+    </div>
+
+    <script src="script_extract.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "files": {
+    "_study_schedule.json": {
+      "filename": "_study_schedule.json",
+      "startDate": "2025-11-14",
+      "reviewCount": 0,
+      "nextReviewDate": "2025-11-14",
+      "lastReviewDate": null
+    },
+    "ielts_vocab_2025-11-12.json": {
+      "filename": "ielts_vocab_2025-11-12.json",
+      "startDate": "2025-11-14",
+      "reviewCount": 0,
+      "nextReviewDate": "2025-11-14",
+      "lastReviewDate": null
+    },
+    "synthetic_dyes_14-11.json": {
+      "filename": "synthetic_dyes_14-11.json",
+      "startDate": "2025-11-14",
+      "reviewCount": 0,
+      "nextReviewDate": "2025-11-14",
+      "lastReviewDate": null
+    }
+  }
+}
