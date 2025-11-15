@@ -50,6 +50,11 @@ async function loadTodaySchedule() {
             displayNewFiles(data.newFiles);
         }
         
+        // Display upcoming files
+        if (data.upcomingFiles && data.upcomingFiles.length > 0) {
+            displayUpcomingFiles(data.upcomingFiles);
+        }
+        
         // Display completed files
         if (data.completed.length > 0) {
             displayCompletedFiles(data.completed);

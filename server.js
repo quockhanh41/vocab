@@ -111,13 +111,13 @@ app.post('/api/extract', async (req, res) => {
     const prompt = `Analyze the following IELTS reading passage and extract advanced vocabulary words suitable for IELTS learners. 
 For each word, provide the following information in JSON format:
 
-1. word: the vocabulary word
-2. phonetic: IPA pronunciation
-3. partOfSpeech: noun, verb, adjective, etc.
-4. meaning_en: English definition
-5. meaning_vi: Vietnamese translation
-6. context: the sentence from the passage where the word appears
-7. example: an additional example sentence using this word
+1. word: the vocabulary word (IMPORTANT: If the word in the passage is a past tense verb ending in -ed, save it as the BASE FORM/infinitive verb without "to". For example: if you find "developed", save it as "develop"; if you find "reduced", save it as "reduce")
+2. phonetic: IPA pronunciation (of the base form)
+3. partOfSpeech: noun, verb, adjective, etc. (If it's a past tense verb, mark it as "verb")
+4. meaning_en: English definition (of the base form)
+5. meaning_vi: Vietnamese translation (of the base form)
+6. context: the sentence from the passage where the word appears (keep the original form as it appears in the passage)
+7. example: an additional example sentence using this word (can use any tense)
 
 Extract ${validCount} words that would be most valuable for IELTS preparation. Focus on academic and formal vocabulary.
 
@@ -237,13 +237,13 @@ Word/Phrase: "${word.trim()}"
 ${context ? `Context: "${context}"` : ''}
 
 Provide the following information:
-1. word: the vocabulary word/phrase
-2. phonetic: IPA pronunciation
-3. partOfSpeech: noun, verb, adjective, etc.
-4. meaning_en: English definition
-5. meaning_vi: Vietnamese translation
-6. context: ${context ? 'use the provided context sentence' : 'create a meaningful context sentence'}
-7. example: an additional example sentence using this word
+1. word: the vocabulary word/phrase (IMPORTANT: If the word is a past tense verb ending in -ed, save it as the BASE FORM/infinitive verb without "to". For example: if looking up "developed", save it as "develop"; if looking up "reduced", save it as "reduce")
+2. phonetic: IPA pronunciation (of the base form)
+3. partOfSpeech: noun, verb, adjective, etc. (If it's a past tense verb, mark it as "verb")
+4. meaning_en: English definition (of the base form)
+5. meaning_vi: Vietnamese translation (of the base form)
+6. context: ${context ? 'use the provided context sentence (keep the original form as it appears in the context)' : 'create a meaningful context sentence (can use any tense)'}
+7. example: an additional example sentence using this word (can use any tense)
 
 Return ONLY a valid JSON object (not an array) without any markdown formatting or additional text. The format should be:
 {
@@ -513,6 +513,7 @@ app.get('/api/study/today', (req, res) => {
       today,
       newFiles: [],
       reviewFiles: [],
+      upcomingFiles: [],
       completed: []
     };
     
@@ -526,7 +527,7 @@ app.get('/api/study/today', (req, res) => {
         
         return {
           filename,
-          wordCount: content.vocabulary?.length || 0,
+          wordCount: Array.isArray(content) ? content.length : 0,
           createdDate: stats.birthtime.toISOString().split('T')[0]
         };
       });
@@ -556,16 +557,34 @@ app.get('/api/study/today', (req, res) => {
           else if (daysSinceFirst === 3) reviewType = 'Ngày 4 (Ôn lại lần 2)';
           else if (daysSinceFirst === 6) reviewType = 'Ngày 7 (Ôn lại lần 3)';
           else if (daysSinceFirst === 13) reviewType = 'Ngày 14 (Ôn lại cuối)';
+          else reviewType = `Ôn lại (ngày ${daysSinceFirst + 1})`;
           
           result.reviewFiles.push({
             ...file,
             status: 'review',
             reviewType,
             firstStudyDate: studyInfo.firstStudyDate,
-            completedCount: studyInfo.completedReviews?.length || 0
+            completedCount: studyInfo.completedReviews?.length || 0,
+            nextReviewDate: today
           });
-        } else if (reviewDates.length === 0) {
-          // All reviews completed
+        } else if (reviewDates.length > 0) {
+          // Has upcoming reviews
+          const nextReviewDate = reviewDates[0];
+          const daysUntilReview = Math.ceil(
+            (new Date(nextReviewDate) - new Date(today)) / (1000 * 60 * 60 * 24)
+          );
+          
+          result.upcomingFiles.push({
+            ...file,
+            status: 'upcoming',
+            message: `Ôn tập tiếp theo: ${nextReviewDate}`,
+            firstStudyDate: studyInfo.firstStudyDate,
+            completedCount: studyInfo.completedReviews?.length || 0,
+            nextReviewDate: nextReviewDate,
+            daysUntilReview: daysUntilReview
+          });
+        } else if (reviewDates.length === 0 && studyInfo.completedReviews?.length >= 4) {
+          // All reviews completed (4 reviews: day 2, 4, 7, 14)
           result.completed.push({
             ...file,
             status: 'completed',
@@ -583,6 +602,7 @@ app.get('/api/study/today', (req, res) => {
         total: allFiles.length,
         new: result.newFiles.length,
         review: result.reviewFiles.length,
+        upcoming: result.upcomingFiles.length,
         completed: result.completed.length
       }
     });
